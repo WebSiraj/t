@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Talking Stardust ♡</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@500;700;900&display=swap');
+*{box-sizing:border-box}body{margin:0;background:#17122e;color:#fff;font-family:Nunito,system-ui;overflow:hidden}
+#game{height:100dvh;position:relative;background:radial-gradient(ellipse at 50% 35%,#a68be0,#4b367e 45%,#19132f 100%)}
+#scene{position:absolute;inset:0}canvas{display:block;width:100%;height:100%}
+header{position:absolute;top:12px;left:15px;right:15px;display:flex;justify-content:space-between;align-items:center;pointer-events:none;gap:8px}
+.logo{font-size:clamp(17px,3vw,27px);font-weight:900;text-shadow:0 3px 0 #7043ad;background:#ffffff20;border:1px solid #ffffff50;padding:10px 15px;border-radius:18px}
+.statsTop{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}.pill{padding:8px 13px;background:#311d63b8;border:1px solid #ffffff40;border-radius:25px;font-weight:900}
+.menu{position:absolute;left:15px;top:50%;transform:translateY(-50%);display:grid;gap:9px}
+button{font-family:inherit;color:white;border:1px solid #ffffff80;border-radius:17px;padding:12px 15px;font-weight:900;font-size:15px;background:linear-gradient(145deg,#a875f0,#6238bd);box-shadow:0 5px 15px #09051c70;cursor:pointer;transition:.15s}
+button:hover{transform:translateY(-2px);filter:brightness(1.15)}button:active{transform:scale(.96)}
+.menu button{min-width:125px;background:linear-gradient(135deg,#fff5ff,#d8c3ff);color:#43206e;border-color:#9f75ed;font-size:15px}
+.bottom{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:95%}
+.bottom button{font-size:13px}.right{position:absolute;right:15px;top:50%;transform:translateY(-50%);display:grid;gap:9px;width:min(170px,30vw)}
+.panel{background:#2a1c56b8;border:1px solid #ffffff55;border-radius:18px;padding:12px;backdrop-filter:blur(10px);font-size:13px}
+.panel h3{margin:0 0 8px;font-size:15px}.bar{height:8px;border-radius:9px;background:#ffffff30;overflow:hidden;margin:5px 0 9px}.fill{height:100%;background:linear-gradient(90deg,#ff8bd7,#9efbda);width:80%;border-radius:9px}
+.bubble{position:absolute;top:18%;left:50%;transform:translateX(-50%);background:#fff;color:#552a86;border-radius:25px;padding:12px 20px;font-weight:900;box-shadow:0 5px 25px #220d4570;max-width:80%;text-align:center}
+#message{position:absolute;bottom:90px;left:50%;transform:translateX(-50%);background:#27184fb8;border:1px solid #ffffff50;border-radius:22px;padding:9px 15px;max-width:90%;text-align:center;font-weight:800}
+#overlay{position:absolute;inset:0;display:none;place-items:center;background:#0c0926c9;z-index:20;padding:20px}
+.modal{max-width:430px;width:100%;background:linear-gradient(145deg,#63419c,#2b1c54);border:1px solid #ffffff50;border-radius:24px;padding:22px;text-align:center;box-shadow:0 15px 40px #0008}.modal h2{margin-top:0}
+.modal button{margin:6px}.close{position:absolute;right:22px;top:20px}
+@media(max-width:700px){.menu{top:auto;bottom:100px;left:8px;transform:none;gap:5px}.menu button{padding:9px 10px;min-width:85px;font-size:12px}.right{top:80px;right:8px;transform:none;width:120px}.panel{padding:8px;font-size:11px}.panel h3{font-size:12px}.bottom{bottom:8px;left:50%;width:96%}.bottom button{padding:8px 10px;font-size:11px}header{top:8px}.statsTop{display:none}.bubble{top:18%;left:62%;max-width:45%;font-size:12px}#message{bottom:72px;font-size:12px}}
+</style>
+</head>
+<body>
+<div id="game">
+<div id="scene"></div>
+<header><div class="logo">✦ My Talking Stardust ♡</div><div class="statsTop"><div class="pill">⭐ <span id="coins">120</span></div><div class="pill">💗 <span id="happy">100</span>%</div><div class="pill">⚡ <span id="energy">85</span>%</div></div></header>
+<div class="bubble" id="speech">Hi Zahra! 💜 Let's play together!</div>
+<div class="menu">
+<button onclick="feed()">🍓 Feed</button><button onclick="play()">🎾 Play</button><button onclick="talk()">🎤 Talk</button><button onclick="sleepToggle()">🌙 Sleep</button><button onclick="dress()">👒 Dress</button><button onclick="room()">🏠 Room</button>
+</div>
+<div class="right"><div class="panel"><h3>✨ Stardust</h3><div>🍓 Hunger</div><div class="bar"><div class="fill" id="hungerbar"></div></div><div>⚡ Energy</div><div class="bar"><div class="fill" id="energybar"></div></div><div>💗 Happiness</div><div class="bar"><div class="fill" id="happybar"></div></div></div><div class="panel"><h3>🎮 Mini Fun</h3><button onclick="bubbleGame()">🫧 Bubble Pop</button></div></div>
+<div class="bottom"><button onclick="pet()">🤍 Pet me</button><button onclick="spin()">🪄 Magic</button><button onclick="daily()">🎁 Gift</button></div>
+<div id="message">Tap Stardust to give a little pat! ✨</div>
+<div id="overlay"><div class="modal"><button class="close" onclick="closeModal()">✕</button><h2 id="modalTitle">✨</h2><div id="modalBody"></div><div id="modalButtons"></div></div></div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/0.160.0/three.min.js"></script>
+<script>
+const sceneHost=document.getElementById('scene');const scene=new THREE.Scene();scene.background=new THREE.Color(0x6b58a0);scene.fog=new THREE.Fog(0x6b58a0,12,32);
+const camera=new THREE.PerspectiveCamera(38,innerWidth/innerHeight,.1,100);camera.position.set(0,2.6,9.5);
+const renderer=new THREE.WebGLRenderer({antialias:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.setSize(innerWidth,innerHeight);renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.outputColorSpace=THREE.SRGBColorSpace;sceneHost.appendChild(renderer.domElement);
+scene.add(new THREE.HemisphereLight(0xe8d9ff,0x44305f,2));
+const key=new THREE.DirectionalLight(0xffe5f6,3);key.position.set(-4,8,5);key.castShadow=true;scene.add(key);
+const fillLight=new THREE.PointLight(0x8ddcff,25,18);fillLight.position.set(4,3,4);scene.add(fillLight);
+const floor=new THREE.Mesh(new THREE.PlaneGeometry(30,30),new THREE.MeshStandardMaterial({color:0x8664a9,roughness:.85}));floor.rotation.x=-Math.PI/2;floor.position.y=-1.45;floor.receiveShadow=true;scene.add(floor);
+const rug=new THREE.Mesh(new THREE.CylinderGeometry(2.4,2.4,.12,64),new THREE.MeshStandardMaterial({color:0x9b70c9,roughness:.8}));rug.position.y=-1.36;rug.receiveShadow=true;scene.add(rug);
+const petGroup=new THREE.Group();scene.add(petGroup);petGroup.position.y=-.35;
+const matFur=new THREE.MeshStandardMaterial({color:0xd9c4ff,roughness:.8});const matLight=new THREE.MeshStandardMaterial({color:0xf7edff,roughness:.7});const matPink=new THREE.MeshStandardMaterial({color:0xf0a8d9,roughness:.65});const matEye=new THREE.MeshStandardMaterial({color:0x17132b,roughness:.15});const matIris=new THREE.MeshStandardMaterial({color:0x7351dd,roughness:.3});const matStar=new THREE.MeshStandardMaterial({color:0xffdf74,metalness:.35,roughness:.3});
+function ell(parent,x,y,z,sx,sy,sz,mat){let m=new THREE.Mesh(new THREE.SphereGeometry(1,32,24),mat);m.position.set(x,y,z);m.scale.set(sx,sy,sz);m.castShadow=true;m.receiveShadow=true;parent.add(m);return m;}
+const body=ell(petGroup,0,-.25,0,.85,1.05,.65,matFur);ell(petGroup,0,-.35,.48,.56,.75,.25,matLight);
+const head=new THREE.Group();head.position.y=1.15;petGroup.add(head);ell(head,0,0,0,1.05,.92,.8,matFur);
+const ears=[];for(let side of [-1,1]){let ear=ell(head,side*.73,.77,-.05,.34,.64,.23,matFur);ear.rotation.z=side*-0.35;ell(head,side*.73,.76,.14,.19,.39,.08,matPink);ears.push(ear)}
+// eyes, eye shine, muzzle
+let eyes=[];for(let side of [-1,1]){let e=ell(head,side*.38,.1,.68,.23,.3,.14,matEye);ell(head,side*.38,.08,.795,.14,.19,.04,matIris);ell(head,side*.38-.05,.16,.83,.055,.07,.025,new THREE.MeshBasicMaterial({color:0xffffff}));eyes.push(e)}
+ell(head,0,-.24,.7,.36,.25,.2,matLight);ell(head,0,-.11,.89,.09,.07,.05,matPink);let mouth=ell(head,0,-.34,.87,.12,.07,.04,new THREE.MeshStandardMaterial({color:0x78405f}));
+for(let side of [-1,1]){for(let j=0;j<3;j++){let whisk=ell(head,side*(.62+j*.1),-.24-j*.06,.73,.18,.018,.015,matLight);whisk.rotation.z=side*.12}}
+let tail=ell(petGroup,0,-.7,-.65,.25,.3,.7,matFur);tail.rotation.x=-.4;
+let paws=[];for(let side of [-1,1]){let p=ell(petGroup,side*.48,-1.15,.38,.35,.23,.38,matLight);paws.push(p);ell(petGroup,side*.5,-1.13,.69,.15,.08,.035,matPink)}
+// star collar
+const starShape=new THREE.Shape();for(let i=0;i<10;i++){let a=i*Math.PI/5-Math.PI/2,r=i%2===0?.24:.11;let x=Math.cos(a)*r,y=Math.sin(a)*r;i===0?starShape.moveTo(x,y):starShape.lineTo(x,y)}starShape.closePath();let star=new THREE.Mesh(new THREE.ExtrudeGeometry(starShape,{depth:.08,bevelEnabled:true,bevelThickness:.03,bevelSize:.02,bevelSegments:2}),matStar);star.position.set(0,-.95,.88);star.rotation.x=0;petGroup.add(star);
+// decorative room objects
+function box(x,y,z,sx,sy,sz,color){let m=new THREE.Mesh(new THREE.BoxGeometry(sx,sy,sz),new THREE.MeshStandardMaterial({color,roughness:.75}));m.position.set(x,y,z);m.receiveShadow=true;m.castShadow=true;scene.add(m);return m}
+box(-4,0, -2.5,2.3,3.2,.3,0x73539c);box(4,0,-3,2.1,3.6,.3,0x71549b);
+for(let i=0;i<8;i++){let starObj=ell(scene,Math.random()*12-6,Math.random()*5-1,-4,.035,.035,.035,new THREE.MeshBasicMaterial({color:0xffe9a6}));}
+let particleGroup=new THREE.Group();scene.add(particleGroup);let particles=[];for(let i=0;i<100;i++){let p=ell(particleGroup,Math.random()*9-4.5,Math.random()*5-1.5,Math.random()*3-4,.025,.025,.025,new THREE.MeshBasicMaterial({color:i%2?0xffe9bd:0xd7b7ff}));particles.push(p)}
+let sleeping=false,coin=120,hunger=85,energy=85,happy=100,actionLock=false;let mouseX=0;
+const message=document.getElementById('message'),speech=document.getElementById('speech');
+function say(m){message.textContent=m;speech.textContent=m}
+function bars(){document.getElementById('hungerbar').style.width=hunger+'%';document.getElementById('energybar').style.width=energy+'%';document.getElementById('happybar').style.width=happy+'%';document.getElementById('energy').textContent=energy;document.getElementById('happy').textContent=happy;document.getElementById('coins').textContent=coin}
+function mood(){petGroup.scale.set(1,1,1);head.rotation.z=0;mouth.scale.y=.07}
+function jump(){if(sleeping)return;petGroup.position.y=-.35;let start=performance.now();function f(t){let v=(t-start)/700;if(v>=1){petGroup.position.y=-.35;return}petGroup.position.y=-.35+Math.sin(v*Math.PI)*.8;requestAnimationFrame(f)}requestAnimationFrame(f)}
+function feed(){if(sleeping){say("Shhh... I'm asleep 😴");return}if(hunger>=100){say("I'm full! Thank you 💜");return}hunger=Math.min(100,hunger+18);happy=Math.min(100,happy+5);say("Yummy! More strawberries please 🍓");jump();bars()}
+function play(){if(sleeping){say("Wake me up first!");return}if(energy<10){say("I'm sleepy... let's rest 😴");return}energy-=10;happy=Math.min(100,happy+12);say("Wheee! That was fun! 🎾");jump();tail.rotation.z+=1;bars()}
+function pet(){if(sleeping){say("I'm snoozing...");return}happy=Math.min(100,happy+5);say(["Hehe, tickles! 💗","You're my favourite human! ✨","Purrrr...","Aww, more pats!"][Math.floor(Math.random()*4)]);head.rotation.z=.15;setTimeout(()=>head.rotation.z=0,700);bars()}
+function sleepToggle(){sleeping=!sleeping;if(sleeping){say("Zzz... dreaming of stars 🌙");petGroup.scale.y=.78;petGroup.position.y=-.6}else{say("Good morning! ☀️");petGroup.scale.y=1;petGroup.position.y=-.35;energy=Math.min(100,energy+20);bars()}}
+function talk(){if(sleeping){say("Zzz...");return}say("Tap the microphone prompt if your browser supports voice input!");let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){say("Voice input isn't supported in this browser. Try Chrome.");return}let r=new SR();r.lang='en-US';r.onresult=e=>{let words=e.results[0][0].transcript;speech.textContent=words;let utter=new SpeechSynthesisUtterance(words);utter.pitch=1.8;utter.rate=1.1;speechSynthesis.speak(utter);say("You said: "+words)};r.onerror=()=>say("I couldn't hear that. Try again!");r.start()}
+function dress(){modal("Dress-up ✨","Pick an accessory for Stardust!",["👑 Crown","🎀 Bow","🕶️ Glasses","🌸 Flower"],(v)=>{if(v==="👑 Crown"){say("Royal Stardust! 👑");ell(head,0,1.05,.1,.28,.12,.15,matStar)}else if(v==="🎀 Bow"){say("A bow! So cute 🎀")}else if(v==="🕶️ Glasses"){say("Fashion mode! 🕶️")}else say("Flower power 🌸")})}
+function room(){modal("Room makeover 🪄","Choose the room mood.",["🌌 Night","🌅 Sunset","🌿 Garden"],v=>{scene.background=new THREE.Color(v==="🌌 Night"?0x30245b:v==="🌅 Sunset"?0xb7789b:0x538a7c);say(v+" room vibes!")})}
+function spin(){if(sleeping){say("I'm asleep!");return}say("✨ Stardust magic!");for(let i=0;i<3;i++){let p=ell(scene,Math.random()*2-1,1+Math.random()*2,1,.12,.12,.12,matStar);setTimeout(()=>scene.remove(p),1800)}jump()}
+function daily(){coin+=20;say("Daily gift: +20 Stardust coins! 🎁");bars()}
+function bubbleGame(){let n=0;modal("Bubble Pop 🫧","Pop 5 bubbles to win 10 coins!",["🫧 Pop bubble","🫧 Pop bubble","🫧 Pop bubble","🫧 Pop bubble","🫧 Pop bubble"],()=>{n++;if(n>=5){coin+=10;say("Bubble champion! +10 coins 🎉");bars();closeModal()}})}
+function modal(title,body,buttons,cb){document.getElementById('modalTitle').textContent=title;document.getElementById('modalBody').textContent=body;let b=document.getElementById('modalButtons');b.innerHTML='';buttons.forEach(v=>{let btn=document.createElement('button');btn.textContent=v;btn.onclick=()=>{if(cb)cb(v)};b.appendChild(btn)});document.getElementById('overlay').style.display='grid'}
+function closeModal(){document.getElementById('overlay').style.display='none'}
+let ray=new THREE.Raycaster(),pointer=new THREE.Vector2();renderer.domElement.addEventListener('pointerdown',e=>{pointer.x=e.clientX/innerWidth*2-1;pointer.y=-(e.clientY/innerHeight)*2+1;ray.setFromCamera(pointer,camera);if(ray.intersectObjects([body,head,tail,...paws],true).length)pet()});
+window.addEventListener('pointermove',e=>{mouseX=(e.clientX/innerWidth-.5)*.7});
+window.addEventListener('resize',()=>{camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix();renderer.setSize(innerWidth,innerHeight)});
+let clock=new THREE.Clock();function animate(){requestAnimationFrame(animate);let t=clock.getElapsedTime();if(!sleeping){petGroup.position.y=-.35+Math.sin(t*2)*.035;head.rotation.y=mouseX*.25+Math.sin(t*.7)*.05;head.rotation.x=Math.sin(t*.8)*.04;tail.rotation.z=Math.sin(t*2)*.3;head.scale.y=1+Math.sin(t*2.2)*.015;}particles.forEach((p,i)=>{p.position.y+=Math.sin(t+i)*.001;p.position.x+=Math.cos(t+i)*.001});renderer.render(scene,camera)}animate();
+setInterval(()=>{if(!sleeping){hunger=Math.max(0,hunger-1);energy=Math.max(0,energy-1);if(hunger<20)say("I'm hungry! 🍓");bars()}},30000);
+bars();
+</script>
+</body></html>
